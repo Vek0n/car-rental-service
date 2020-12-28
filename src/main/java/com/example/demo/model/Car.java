@@ -11,7 +11,7 @@ public class Car {
 	@Id 
 	@GeneratedValue
 	private long  id;
-	private long client_id;
+	private long clientId;
 	private String brandName;
 	private String modelName;
 	private CarStatus status;
@@ -26,11 +26,11 @@ public class Car {
 	}
 
 	public long getClient_id() {
-		return client_id;
+		return clientId;
 	}
 
 	public void setClient_id(long client_id) {
-		this.client_id = client_id;
+		this.clientId = client_id;
 	}
 
 	public String getBrandName() {
@@ -56,10 +56,25 @@ public class Car {
 	public void setStatus(CarStatus available) {
 		this.status = available;
 	}
+	
+	public void rentCar(long clientId) {
+		this.status = CarStatus.RENTED;
+		this.clientId = clientId;
+		
+	}
 
+	public void returnCar() {
+		this.initiateCar();
+	}
+	
+	public void initiateCar() {
+		this.status = CarStatus.AVAILABLE;
+		this.clientId = 0;
+	}
+	
 	@Override
 	public String toString() {
-		return "Car [id=" + id + ", client_id=" + client_id + ", brandName=" + brandName + ", modelName=" + modelName
+		return "Car [id=" + id + ", client_id=" + clientId + ", brandName=" + brandName + ", modelName=" + modelName
 				+ ", status=" + status + "]";
 	}	
 }
