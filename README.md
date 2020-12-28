@@ -98,7 +98,35 @@
   
 #### List of all rented cars
 - **Request** : **`GET /cars/return/`**
-
+- **Response** :
+```
+{
+  "_embedded": {
+    "cars": [
+      {
+        "id": 1,
+        "client_id": 1,
+        "brandName": "Ford",
+        "modelName": "Fiesta",
+        "status": "RENTED",
+        "_links": {
+          "self": {
+            "href": "http://localhost:8080/cars/1"
+          },
+          "cars": {
+            "href": "http://localhost:8080/cars"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/cars"
+    }
+  }
+}
+```
   
 #### Return a car
 - **Request** : **`POST /cars/return/{id}`**
