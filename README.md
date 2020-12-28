@@ -23,34 +23,34 @@
 #### Get all cars
 - **Request** : **`GET /cars`**
 - **Response** :
-```
-{
-  "_embedded": {
-    "cars": [
-      {
-        "id": 1,
-        "client_id": 0,
-        "brandName": "Ford",
-        "modelName": "Focus",
-        "status": "AVAILABLE",
-        "_links": {
-          "self": {
-            "href": "http://localhost:8080/cars/1"
-          },
-          "cars": {
-            "href": "http://localhost:8080/cars"
-          }
-        }
-      }
-    ]
-  },
-  "_links": {
-    "self": {
-      "href": "http://localhost:8080/cars"
-    }
-  }
-}
-```
+	```
+	{
+	  "_embedded": {
+	    "cars": [
+	      {
+		"id": 1,
+		"client_id": 0,
+		"brandName": "Ford",
+		"modelName": "Focus",
+		"status": "AVAILABLE",
+		"_links": {
+		  "self": {
+		    "href": "http://localhost:8080/cars/1"
+		  },
+		  "cars": {
+		    "href": "http://localhost:8080/cars"
+		  }
+		}
+	      }
+	    ]
+	  },
+	  "_links": {
+	    "self": {
+	      "href": "http://localhost:8080/cars"
+	    }
+	  }
+	}
+	```
   
   
 #### Delete a car
@@ -62,12 +62,12 @@
   
 #### Edit a car
 - **Request** : **`PUT /cars/{id}`**
-```
-{
-  "brandName": "Ford",
-  "modelName": "Fiesta"
-}
-```
+	```
+	{
+	  "brandName": "Ford",
+	  "modelName": "Fiesta"
+	}
+	```
 - **Response** :
   ```
   200 OK
@@ -78,11 +78,11 @@
 
 #### Rent a car
 - **Request** : **`POST /cars/rent/{car_id}`**
-```
-{
-	"id":{client_id}
-}
-```
+	```
+	{
+		"id":{client_id}
+	}
+	```
 - **Response** :
   ```
   202 Accepted
@@ -99,34 +99,34 @@
 #### List of all rented cars
 - **Request** : **`GET /cars/return/`**
 - **Response** :
-```
-{
-  "_embedded": {
-    "cars": [
-      {
-        "id": 1,
-        "client_id": 1,
-        "brandName": "Ford",
-        "modelName": "Fiesta",
-        "status": "RENTED",
-        "_links": {
-          "self": {
-            "href": "http://localhost:8080/cars/1"
-          },
-          "cars": {
-            "href": "http://localhost:8080/cars"
-          }
-        }
-      }
-    ]
-  },
-  "_links": {
-    "self": {
-      "href": "http://localhost:8080/cars"
-    }
-  }
-}
-```
+	```
+	{
+	  "_embedded": {
+	    "cars": [
+	      {
+		"id": 1,
+		"client_id": 1,
+		"brandName": "Ford",
+		"modelName": "Fiesta",
+		"status": "RENTED",
+		"_links": {
+		  "self": {
+		    "href": "http://localhost:8080/cars/1"
+		  },
+		  "cars": {
+		    "href": "http://localhost:8080/cars"
+		  }
+		}
+	      }
+	    ]
+	  },
+	  "_links": {
+	    "self": {
+	      "href": "http://localhost:8080/cars"
+	    }
+	  }
+	}
+	```
   
 #### Return a car
 - **Request** : **`POST /cars/return/{id}`**
@@ -145,8 +145,8 @@
   ```
   
 #### Pre-populated clients database:
-```
-insert into client values (1, 'Jan', 'Kowalski')
-insert into client values (2, 'Szymon', 'Kaczmarek')
-```
+	```
+	insert into client values (1, 'Jan', 'Kowalski')
+	insert into client values (2, 'Szymon', 'Kaczmarek')
+	```
   
