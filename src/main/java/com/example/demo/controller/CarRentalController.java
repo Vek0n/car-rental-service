@@ -41,25 +41,37 @@ public class CarRentalController {
 	@GetMapping(path = "/cars")
 	public CollectionModel<EntityModel<Car>> getAllCars() {
 
-		List<EntityModel<Car>> cars = repository.findAll().stream().map(assembler::toModel)
+		List<EntityModel<Car>> cars = repository
+				.findAll()
+				.stream()
+				.map(assembler::toModel)
 				.collect(Collectors.toList());
 
-		return CollectionModel.of(cars, linkTo(methodOn(CarRentalController.class).getAllCars()).withSelfRel());
+		return CollectionModel.of(cars, linkTo(methodOn(CarRentalController.class)
+				.getAllCars())
+				.withSelfRel());
 	}
 
 	@GetMapping(path = "/cars/{id}")
 	public EntityModel<Car> getCar(@PathVariable long id) {
-		Car car = repository.findById(id).orElseThrow();
+		Car car = repository
+				.findById(id)
+				.orElseThrow();
+		
 		return assembler.toModel(car);
 	}
 
 	@PutMapping(path = "/cars/{id}")
 	public ResponseEntity<?> updateCar(@RequestBody Car car, @PathVariable long id) {
 		Car carToUpdate = car;
-		Car currentCar = repository.findById(id).orElseThrow();
+		Car currentCar = repository
+				.findById(id)
+				.orElseThrow();
+		
 		carToUpdate.setId(id);
 		carToUpdate.setStatus(currentCar.getStatus());
 		repository.save(carToUpdate);
+		
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -69,21 +81,27 @@ public class CarRentalController {
 		repository.delete(car);
 
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		
 	}
 
 	@GetMapping(path = "/cars/rent")
 	public CollectionModel<EntityModel<Car>> getAvailableCars() {
-		List<EntityModel<Car>> cars = repository.findAll().stream()
-				.filter(car -> car.getStatus() == CarStatus.AVAILABLE).map(assembler::toModel)
+		List<EntityModel<Car>> cars = repository
+				.findAll()
+				.stream()
+				.filter(car -> car.getStatus() == CarStatus.AVAILABLE)
+				.map(assembler::toModel)
 				.collect(Collectors.toList());
 
-		return CollectionModel.of(cars, linkTo(methodOn(CarRentalController.class).getAllCars()).withSelfRel());
+		return CollectionModel.of(cars, linkTo(methodOn(CarRentalController.class)
+				.getAllCars())
+				.withSelfRel());
 	}
 
 	@PostMapping(path = "/cars/rent/{carId}")
 	public ResponseEntity<?> rentCar(@PathVariable long carId, @RequestBody Client client) {
-		Car car = repository.findById(carId).orElseThrow();
+		Car car = repository
+				.findById(carId)
+				.orElseThrow();
 
 		if (car.getStatus() == CarStatus.AVAILABLE) {
 			car.setClient_id(client.getId());
@@ -97,15 +115,24 @@ public class CarRentalController {
 
 	@GetMapping(path = "/cars/return")
 	public CollectionModel<EntityModel<Car>> getRentedCars() {
-		List<EntityModel<Car>> cars = repository.findAll().stream().filter(car -> car.getStatus() == CarStatus.RENTED)
-				.map(assembler::toModel).collect(Collectors.toList());
+		List<EntityModel<Car>> cars = repository
+				.findAll()
+				.stream()
+				.filter(car -> car.getStatus() == CarStatus.RENTED)
+				.map(assembler::toModel)
+				.collect(Collectors.toList());
 
-		return CollectionModel.of(cars, linkTo(methodOn(CarRentalController.class).getAllCars()).withSelfRel());
+		return CollectionModel.of(cars, 
+				linkTo(methodOn(CarRentalController.class)
+						.getAllCars())
+						.withSelfRel());
 	}
 
 	@PostMapping(path = "/cars/return/{carId}")
 	public ResponseEntity<?> returnCar(@PathVariable long carId, @RequestBody Client client) {
-		Car car = repository.findById(carId).orElseThrow();
+		Car car = repository
+				.findById(carId)
+				.orElseThrow();
 
 		if (car.getStatus() == CarStatus.RENTED && client.getId() == car.getClient_id()) {
 			car.setStatus(CarStatus.AVAILABLE);
@@ -115,5 +142,4 @@ public class CarRentalController {
 			return new ResponseEntity<>("Car not rented",HttpStatus.CONFLICT);
 		}
 	}
-
 }
