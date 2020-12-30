@@ -1,4 +1,6 @@
 package com.example.demo.controller;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +35,13 @@ public class CarRentalController {
 	}
 
 	@GetMapping(path = "/cars")
-	public CollectionModel<EntityModel<Car>> getAllCars() {
+	public List<Car> getAllCars() {
 		return carRentalService.getAllCars();
 	}
 
 
 	@GetMapping(path = "/cars/{id}")
-	public EntityModel<Car> getCar(@PathVariable long id) throws CarNotFoundException {
+	public Car getCar(@PathVariable long id) throws CarNotFoundException {
 		return carRentalService.getCar(id);
 	}
 
@@ -55,7 +57,7 @@ public class CarRentalController {
 	}
 
 	@GetMapping(path = "/cars/rent")
-	public CollectionModel<EntityModel<Car>> getAvailableCars() {
+	public List<Car>  getAvailableCars() {
 		return carRentalService.getAvailableCars();
 	}
 
@@ -65,7 +67,7 @@ public class CarRentalController {
 	}
 	
 	@GetMapping(path = "/cars/return")
-	public CollectionModel<EntityModel<Car>> getRentedCars() {
+	public List<Car>  getRentedCars() {
 		return carRentalService.getRentedCars();
 	}
 

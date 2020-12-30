@@ -1,8 +1,12 @@
 package com.example.demo.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.example.demo.utils.CarStatus;
 
@@ -10,28 +14,28 @@ import com.example.demo.utils.CarStatus;
 public class Car {
 	@Id 
 	@GeneratedValue
-	private long  id;
-	private long clientId;
+	private long  carId;
 	private String brandName;
 	private String modelName;
 	private CarStatus status;
 	
+	@ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="clientId", nullable=true)
+	private Client client;
+
 	
 	public long getId() {
-		return id;
+		return carId;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public Client getClient() {
+		return client;
 	}
 
-	public long getClient_id() {
-		return clientId;
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
-	public void setClient_id(long client_id) {
-		this.clientId = client_id;
-	}
 
 	public String getBrandName() {
 		return brandName;
@@ -57,9 +61,9 @@ public class Car {
 		this.status = available;
 	}
 	
-	public void rentCar(long clientId) {
+	public void rentCar(Client client) {
 		this.status = CarStatus.RENTED;
-		this.clientId = clientId;
+		this.client = client;
 		
 	}
 
@@ -69,12 +73,14 @@ public class Car {
 	
 	public void initiateCar() {
 		this.status = CarStatus.AVAILABLE;
-		this.clientId = 0;
+		this.client = null;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Car [id=" + id + ", client_id=" + clientId + ", brandName=" + brandName + ", modelName=" + modelName
-				+ ", status=" + status + "]";
-	}	
+		return "Car [carId=" + carId + ", brandName=" + brandName + ", modelName=" + modelName + ", status=" + status
+				+ ", client=" + client + "]";
+	}
+	
+
 }

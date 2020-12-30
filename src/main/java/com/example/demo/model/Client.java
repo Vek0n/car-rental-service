@@ -1,18 +1,26 @@
 package com.example.demo.model;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Client {
 	@Id 
-	private long  id;
+	@GeneratedValue
+	private long  clientId;
 	private String firstName;
 	private String secondName;
+	
+	@OneToMany(mappedBy="client", cascade = CascadeType.ALL)
+	private Set<Car> car;
+	
 	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
+		return clientId;
 	}
 	public String getFirstName() {
 		return firstName;
