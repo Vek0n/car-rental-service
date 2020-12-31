@@ -1,21 +1,14 @@
 package com.example.demo.controller;
 import java.util.List;
 
+import com.example.demo.domain.car.CarDTO;
+import com.example.demo.service.CarHasBeenAlreadyRentedException;
+import com.example.demo.service.ClientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.http.ResponseEntity;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import com.example.demo.model.Car;
-import com.example.demo.model.Client;
+import org.springframework.web.bind.annotation.*;
+import com.example.demo.domain.car.Car;
 import com.example.demo.service.CarRentalService;
-import com.example.demo.utils.CarNotFoundException;
+import com.example.demo.service.CarNotFoundException;
 
 
 @RestController
@@ -47,12 +40,13 @@ public class CarRentalController {
 
 	
 	@PutMapping(path = "/cars/{id}")
-	public Car updateCar(@RequestBody Car car, @PathVariable long id) throws CarNotFoundException {
+	public Car updateCar(@RequestBody CarDTO car, @PathVariable long id) throws ClientNotFoundException {
 		return carRentalService.updateCar(car, id);
 	}
 
+
 	@DeleteMapping("/cars/{id}")
-	public ResponseEntity<?> deleteCar(@PathVariable long id) throws CarNotFoundException {
+	public boolean deleteCar(@PathVariable long id) throws CarNotFoundException {
 		return carRentalService.deleteCar(id);
 	}
 
@@ -62,8 +56,8 @@ public class CarRentalController {
 	}
 
 	@PostMapping(path = "/cars/rent/{carId}")
-	public ResponseEntity<?> rentCar(@PathVariable long carId, @RequestBody Client client) throws CarNotFoundException {
-		return carRentalService.rentCar(carId, client);
+	public Car rentCar(@PathVariable long carId, @RequestParam long clientId) throws CarNotFoundException, CarHasBeenAlreadyRentedException, ClientNotFoundException {
+		return carRentalService.rentCar(carId, clientId);
 	}
 	
 	@GetMapping(path = "/cars/return")
@@ -72,7 +66,7 @@ public class CarRentalController {
 	}
 
 	@PostMapping(path = "/cars/return/{carId}")
-	public ResponseEntity<?> returnCar(@PathVariable long carId, @RequestBody Client client) throws CarNotFoundException {
-		return carRentalService.returnCar(carId, client);
+	public Car returnCar(@PathVariable long carId, @RequestParam long clientId) throws CarNotFoundException, CarHasBeenAlreadyRentedException {
+		return carRentalService.returnCar(carId, clientId);
 	}
 }

@@ -1,24 +1,31 @@
-package com.example.demo.model;
+package com.example.demo.domain.client;
+import com.example.demo.domain.car.Car;
+
+import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 @Entity
 public class Client {
 	@Id 
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long  clientId;
 	private String firstName;
 	private String secondName;
 	
 	@OneToMany(mappedBy="client", cascade = CascadeType.ALL)
-	private Set<Car> car;
-	
+	private List<Car> cars;
+
+	Client(long clientId, String firstName, String secondName, List<Car> cars) {
+		this.clientId = clientId;
+		this.firstName = firstName;
+		this.secondName = secondName;
+		this.cars = cars;
+	}
+
+	public Client(){}
+
 	public long getId() {
 		return clientId;
 	}

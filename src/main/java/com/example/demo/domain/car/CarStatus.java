@@ -1,4 +1,4 @@
-package com.example.demo.utils;
+package com.example.demo.domain.car;
 
 public enum CarStatus {
 	AVAILABLE,

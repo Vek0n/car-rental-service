@@ -2,108 +2,103 @@ package com.example.demo.service;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
+import com.example.demo.domain.car.CarDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.repository.CarRentalRepository;
-import com.example.demo.model.Car;
-import com.example.demo.model.Client;
-import com.example.demo.utils.CarNotFoundException;
-import com.example.demo.utils.CarStatus;
+import com.example.demo.domain.car.Car;
+import com.example.demo.domain.client.Client;
+import com.example.demo.domain.car.CarStatus;
 
 @Service
 public class CarRentalService {
 	
 
-	private CarRentalRepository repository;
+	private CarRentalRepository carRepository;
+	private ClientService clientService;
 	
 	@Autowired
-	public CarRentalService(CarRentalRepository repository) {
-		this.repository = repository;
+	public CarRentalService(CarRentalRepository carRepository, ClientService clientService) {
+		this.carRepository = carRepository;
+		this.clientService = clientService;
 	}
 	
 	public List<Car> getAllCars() {
-		return repository.findAll();
+		return carRepository.findAll();
 	}
 	
 	
-	public Car addCar(@RequestBody Car newCar) {
+	public Car addCar(Car newCar) {
 		newCar.initiateCar();
-		return repository.save(newCar);
+		return carRepository.save(newCar);
 	}
 	
 	
-	public Car getCar(@PathVariable long id) throws CarNotFoundException {
-		return repository
+	public Car getCar(long id) throws CarNotFoundException {
+		return carRepository
 				.findById(id)
 				.orElseThrow(() -> new CarNotFoundException(id));
 	}
 	
 	
-	public Car updateCar(@RequestBody Car carToUpdate, @PathVariable long id) throws CarNotFoundException {
-		Car car = repository
-				.findById(id)
-				.orElseThrow(() -> new CarNotFoundException(id));
-		
-		BeanUtils.copyProperties(carToUpdate, car, "carId"); //nie dziala
-		repository.save(car);
-		
-		return carToUpdate;
+	public Car updateCar(CarDTO carToUpdate, long carId) throws ClientNotFoundException {
+		if (carToUpdate.getClientId()==0){
+			return carRepository.save(new Car(carId, carToUpdate, null));
+		}else {
+			return carRepository.save(new Car(carId,
+					carToUpdate,
+					clientService.getClient(carToUpdate.getClientId())));
+		}
 	}
 	
 	
-	public ResponseEntity<?> deleteCar(@PathVariable long id) throws CarNotFoundException {
-		Car car = repository
+	public boolean deleteCar(long id) throws CarNotFoundException {
+		Car car = carRepository
 				.findById(id)
 				.orElseThrow(() -> new CarNotFoundException(id));
-		repository.delete(car);
-
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		carRepository.delete(car);
+		return true;
 	}
 	
 	
 	public List<Car> getAvailableCars() {
-		return repository.findByStatus(CarStatus.AVAILABLE);
+		return carRepository.findByStatus(CarStatus.AVAILABLE);
 	}
 	
 	
-	public ResponseEntity<Car> rentCar(@PathVariable long carId, @RequestBody Client client) throws CarNotFoundException {
-		Car car = repository
+	public Car rentCar(long carId, long clientId) throws CarNotFoundException, CarHasBeenAlreadyRentedException, ClientNotFoundException {
+		Car car = carRepository
 				.findById(carId)
 				.orElseThrow(() -> new CarNotFoundException(carId));
 
-		if (car.getClient() == null) {
+		if (car.isAvailable()) {
+			Client client = clientService.getClient(clientId);
 			car.rentCar(client);
-			repository.save(car);
-			return new ResponseEntity<Car>(car, HttpStatus.OK);
+			return carRepository.save(car);
 		} else {
-			return new ResponseEntity<Car>(car, HttpStatus.CONFLICT);
+			throw new CarHasBeenAlreadyRentedException(carId);
 		}
 	}
 	
 	
 	public List<Car> getRentedCars() {
-		return repository.findByStatus(CarStatus.RENTED);
+		return carRepository.findByStatus(CarStatus.RENTED);
 	}
 	
 	
 	
-	public ResponseEntity<Car> returnCar(@PathVariable long carId, @RequestBody Client client) throws CarNotFoundException {
-		Car car = repository
+	public Car returnCar(long carId, long clientId) throws CarNotFoundException, CarHasBeenAlreadyRentedException {
+		Car car = carRepository
 				.findById(carId)
 				.orElseThrow(() -> new CarNotFoundException(carId));
 
-		if (car.getClient() !=null) { //&& client.getId() == car.getClient().getId()){
+		if (car.getClient() !=null && clientId == car.getClient().getId()) {
 			car.returnCar();
-			repository.save(car);
-			return new ResponseEntity<Car>(car, HttpStatus.OK);
+			carRepository.save(car);
+			return carRepository.save(car);
 		} else {
-			return new ResponseEntity<Car>(car, HttpStatus.CONFLICT);
+			throw new CarHasBeenAlreadyRentedException(carId);
 		}
 	}
 }
