@@ -2,13 +2,13 @@ package com.example.demo.controller;
 import java.util.List;
 
 import com.example.demo.domain.car.CarDTO;
-import com.example.demo.service.CarHasBeenAlreadyRentedException;
-import com.example.demo.service.ClientNotFoundException;
+import com.example.demo.service.Exceptions.CarRentedByAnotherUserException;
+import com.example.demo.service.Exceptions.ClientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.domain.car.Car;
 import com.example.demo.service.CarRentalService;
-import com.example.demo.service.CarNotFoundException;
+import com.example.demo.service.Exceptions.CarNotFoundException;
 
 
 @RestController
@@ -56,7 +56,7 @@ public class CarRentalController {
 	}
 
 	@PostMapping(path = "/cars/rent/{carId}")
-	public Car rentCar(@PathVariable long carId, @RequestParam long clientId) throws CarNotFoundException, CarHasBeenAlreadyRentedException, ClientNotFoundException {
+	public Car rentCar(@PathVariable long carId, @RequestParam long clientId) throws CarNotFoundException, CarRentedByAnotherUserException, ClientNotFoundException {
 		return carRentalService.rentCar(carId, clientId);
 	}
 	
@@ -66,7 +66,7 @@ public class CarRentalController {
 	}
 
 	@PostMapping(path = "/cars/return/{carId}")
-	public Car returnCar(@PathVariable long carId, @RequestParam long clientId) throws CarNotFoundException, CarHasBeenAlreadyRentedException {
+	public Car returnCar(@PathVariable long carId, @RequestParam long clientId) throws CarNotFoundException, CarRentedByAnotherUserException {
 		return carRentalService.returnCar(carId, clientId);
 	}
 }

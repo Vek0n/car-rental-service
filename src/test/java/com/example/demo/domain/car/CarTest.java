@@ -4,6 +4,9 @@ import com.example.demo.domain.client.Client;
 import com.example.demo.domain.client.ClientBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CarTest {
@@ -25,13 +28,33 @@ class CarTest {
 
     @Test
     void returnCar() {
+        Client client = new ClientBuilder().defaultClient().build();
+        Car testCar = new CarBuilder().defaultCar().withStatus(CarStatus.RENTED).withClient(client).build();
+
+        testCar.returnCar();
+
+        assertEquals(testCar.getStatus(), CarStatus.AVAILABLE);
+        assertEquals(testCar.getClient(), null);
+        assertTrue(testCar.isAvailable());
     }
 
     @Test
     void initiateCar() {
+        Client client = new ClientBuilder().defaultClient().build();
+        Car testCar = new CarBuilder().defaultCar().withStatus(CarStatus.RENTED).withClient(client).build();
+
+        testCar.initiateCar();
+
+        assertEquals(testCar.getStatus(), CarStatus.AVAILABLE);
+        assertEquals(testCar.getClient(), null);
+        assertTrue(testCar.isAvailable());
     }
 
     @Test
-    void isAvaillable() {
+    void isAvailable() {
+        Client client = new ClientBuilder().defaultClient().build();
+        Car testCar = new CarBuilder().defaultCar().withStatus(CarStatus.RENTED).withClient(client).build();
+
+        assertFalse(testCar.isAvailable());
     }
 }

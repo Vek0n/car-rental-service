@@ -6,6 +6,13 @@ public class CarDTO {
     CarStatus status;
     long clientId;
 
+    public CarDTO(String brandName, String modelName, CarStatus status, long clientId) {
+        this.brandName = brandName;
+        this.modelName = modelName;
+        this.status = status;
+        this.clientId = clientId;
+    }
+
     public String getBrandName() {
         return brandName;
     }
