@@ -1,8 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.service.client;
 
 import com.example.demo.domain.client.Client;
 import com.example.demo.repository.ClientRepository;
-import com.example.demo.service.Exceptions.ClientNotFoundException;
+import com.example.demo.service.client.ClientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
-    Client getClient (long id) throws ClientNotFoundException {
+    public Client getClient (long id) throws ClientNotFoundException {
         return clientRepository.findById(id).orElseThrow(() -> new ClientNotFoundException(id));
     }
 }

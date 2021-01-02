@@ -4,10 +4,12 @@ import com.example.demo.domain.car.*;
 import com.example.demo.domain.client.Client;
 import com.example.demo.domain.client.ClientBuilder;
 import com.example.demo.repository.CarRentalRepository;
-import com.example.demo.service.Exceptions.CannotDeleteCarException;
-import com.example.demo.service.Exceptions.CarNotFoundException;
-import com.example.demo.service.Exceptions.CarRentedByAnotherUserException;
-import com.example.demo.service.Exceptions.ClientNotFoundException;
+import com.example.demo.service.car.CannotDeleteCarException;
+import com.example.demo.service.car.CarNotFoundException;
+import com.example.demo.service.car.CarRentalService;
+import com.example.demo.service.car.CarRentedByAnotherUserException;
+import com.example.demo.service.client.ClientNotFoundException;
+import com.example.demo.service.client.ClientService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -239,7 +241,7 @@ class CarRentalServiceTest {
         given(carRentalRepository.findById(testCar.getCarId())).willReturn(Optional.of(testCar));
 
         //Then
-        Exception exception = assertThrows(CarRentedByAnotherUserException.class, () -> {
+        assertThrows(CarRentedByAnotherUserException.class, () -> {
             testService.returnCar(testCar.getCarId(), client2.getId());
         });
 

@@ -1,12 +1,10 @@
-package com.example.demo.service;
+package com.example.demo.service.car;
 
 import java.util.List;
 
 import com.example.demo.domain.car.CarDTO;
-import com.example.demo.service.Exceptions.CannotDeleteCarException;
-import com.example.demo.service.Exceptions.CarNotFoundException;
-import com.example.demo.service.Exceptions.CarRentedByAnotherUserException;
-import com.example.demo.service.Exceptions.ClientNotFoundException;
+import com.example.demo.service.client.ClientService;
+import com.example.demo.service.client.ClientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

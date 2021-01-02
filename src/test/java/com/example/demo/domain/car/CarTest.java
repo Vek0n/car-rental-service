@@ -4,9 +4,6 @@ import com.example.demo.domain.client.Client;
 import com.example.demo.domain.client.ClientBuilder;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class CarTest {
@@ -42,7 +39,7 @@ class CarTest {
         testCar.returnCar();
 
         assertEquals(testCar.getStatus(), CarStatus.AVAILABLE);
-        assertEquals(testCar.getClient(), null);
+        assertNull(testCar.getClient());
         assertTrue(testCar.isAvailable());
     }
 

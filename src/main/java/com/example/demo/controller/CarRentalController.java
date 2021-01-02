@@ -2,11 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.car.Car;
 import com.example.demo.domain.car.CarDTO;
-import com.example.demo.service.CarRentalService;
-import com.example.demo.service.Exceptions.CannotDeleteCarException;
-import com.example.demo.service.Exceptions.CarNotFoundException;
-import com.example.demo.service.Exceptions.CarRentedByAnotherUserException;
-import com.example.demo.service.Exceptions.ClientNotFoundException;
+import com.example.demo.service.car.CarRentalService;
+import com.example.demo.service.car.CannotDeleteCarException;
+import com.example.demo.service.car.CarNotFoundException;
+import com.example.demo.service.car.CarRentedByAnotherUserException;
+import com.example.demo.service.client.ClientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

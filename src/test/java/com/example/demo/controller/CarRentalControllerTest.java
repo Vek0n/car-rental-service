@@ -6,7 +6,7 @@ import com.example.demo.domain.car.CarDTO;
 import com.example.demo.domain.car.CarStatus;
 import com.example.demo.domain.client.Client;
 import com.example.demo.domain.client.ClientBuilder;
-import com.example.demo.service.CarRentalService;
+import com.example.demo.service.car.CarRentalService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -58,8 +59,17 @@ class CarRentalControllerTest {
     @Test
     void getAllCars() throws Exception {
         //Given
-        List<Car> givenCars = List.of(new CarBuilder().defaultCar().build(),
-                new CarBuilder().defaultCar().withCarId(2).withBrandName("Audi").withModelName("A4").build());
+        Car testCar1 = new CarBuilder()
+                .defaultCar()
+                .build();
+        Car testCar2 = new CarBuilder()
+                .defaultCar()
+                .withCarId(2)
+                .withBrandName("Audi")
+                .withModelName("A4")
+                .build();
+
+        List<Car> givenCars = List.of(testCar1, testCar2);
 
         given(carRentalServiceMock.getAllCars()).willReturn(givenCars);
 
@@ -67,16 +77,16 @@ class CarRentalControllerTest {
         mvc.perform(get("/cars").contentType(MediaType.ALL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(2)))
-                .andExpect(jsonPath("$[0].carId").value(givenCars.get(0).getCarId()))
-                .andExpect(jsonPath("$[0].brandName").value(givenCars.get(0).getBrandName()))
-                .andExpect(jsonPath("$[0].modelName").value(givenCars.get(0).getModelName()))
-                .andExpect(jsonPath("$[0].status").value(givenCars.get(0).getStatus().toString()))
-                .andExpect(jsonPath("$[0].client").value(givenCars.get(0).getClient()))
-                .andExpect(jsonPath("$[1].carId").value(givenCars.get(1).getCarId()))
-                .andExpect(jsonPath("$[1].brandName").value(givenCars.get(1).getBrandName()))
-                .andExpect(jsonPath("$[1].modelName").value(givenCars.get(1).getModelName()))
-                .andExpect(jsonPath("$[1].status").value(givenCars.get(1).getStatus().toString()))
-                .andExpect(jsonPath("$[1].client").value(givenCars.get(1).getClient()));
+                .andExpect(jsonPath("$[0].carId").value(testCar1.getCarId()))
+                .andExpect(jsonPath("$[0].brandName").value(testCar1.getBrandName()))
+                .andExpect(jsonPath("$[0].modelName").value(testCar1.getModelName()))
+                .andExpect(jsonPath("$[0].status").value(testCar1.getStatus().toString()))
+                .andExpect(jsonPath("$[0].client").value(testCar1.getClient()))
+                .andExpect(jsonPath("$[1].carId").value(testCar2.getCarId()))
+                .andExpect(jsonPath("$[1].brandName").value(testCar2.getBrandName()))
+                .andExpect(jsonPath("$[1].modelName").value(testCar2.getModelName()))
+                .andExpect(jsonPath("$[1].status").value(testCar2.getStatus().toString()))
+                .andExpect(jsonPath("$[1].client").value(testCar2.getClient()));
     }
 
     @Test
@@ -139,60 +149,49 @@ class CarRentalControllerTest {
     @Test
     void getAvailableCars() throws Exception {
         //Given
-        List<Car> givenCars = List.of(
-                new CarBuilder()
-                        .defaultCar()
-                        .build(),
-                new CarBuilder()
-                        .defaultCar()
-                        .withCarId(2)
-                        .withBrandName("Audi")
-                        .withModelName("A4")
-                        .withStatus(CarStatus.RENTED)
-                        .build());
+        Car testCar = new CarBuilder()
+                .defaultCar()
+                .build();
+        List<Car> givenCars = Collections.singletonList(testCar);
 
-        List<Car> availableCars = List.of(givenCars.get(0));
-        given(carRentalServiceMock.getAvailableCars()).willReturn(availableCars);
+        given(carRentalServiceMock.getAvailableCars()).willReturn(givenCars);
 
         //Then
         mvc.perform(get("/cars/rent").contentType(MediaType.ALL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
-                .andExpect(jsonPath("$[0].carId").value(givenCars.get(0).getCarId()))
-                .andExpect(jsonPath("$[0].brandName").value(givenCars.get(0).getBrandName()))
-                .andExpect(jsonPath("$[0].modelName").value(givenCars.get(0).getModelName()))
-                .andExpect(jsonPath("$[0].status").value(givenCars.get(0).getStatus().toString()))
-                .andExpect(jsonPath("$[0].client").value(givenCars.get(0).getClient()));
+                .andExpect(jsonPath("$[0].carId").value(testCar.getCarId()))
+                .andExpect(jsonPath("$[0].brandName").value(testCar.getBrandName()))
+                .andExpect(jsonPath("$[0].modelName").value(testCar.getModelName()))
+                .andExpect(jsonPath("$[0].status").value(testCar.getStatus().toString()))
+                .andExpect(jsonPath("$[0].client").value(testCar.getClient()));
     }
 
 
     @Test
     void getRentedCars() throws Exception {
         //Given
-        List<Car> givenCars = List.of(
-                new CarBuilder()
-                        .defaultCar()
-                        .build(),
-                new CarBuilder()
+        Car testCar = new CarBuilder()
                         .defaultCar()
                         .withCarId(2)
                         .withBrandName("Audi")
                         .withModelName("A4")
                         .withStatus(CarStatus.RENTED)
-                        .build());
+                        .build();
 
-        List<Car> rentedCar = List.of(givenCars.get(1));
-        given(carRentalServiceMock.getRentedCars()).willReturn(rentedCar);
+        List<Car> givenCars = Collections.singletonList(testCar);
+
+        given(carRentalServiceMock.getRentedCars()).willReturn(givenCars);
 
         //Then
         mvc.perform(get("/cars/return").contentType(MediaType.ALL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
-                .andExpect(jsonPath("$[0].carId").value(givenCars.get(1).getCarId()))
-                .andExpect(jsonPath("$[0].brandName").value(givenCars.get(1).getBrandName()))
-                .andExpect(jsonPath("$[0].modelName").value(givenCars.get(1).getModelName()))
-                .andExpect(jsonPath("$[0].status").value(givenCars.get(1).getStatus().toString()))
-                .andExpect(jsonPath("$[0].client").value(givenCars.get(1).getClient()));
+                .andExpect(jsonPath("$[0].carId").value(testCar.getCarId()))
+                .andExpect(jsonPath("$[0].brandName").value(testCar.getBrandName()))
+                .andExpect(jsonPath("$[0].modelName").value(testCar.getModelName()))
+                .andExpect(jsonPath("$[0].status").value(testCar.getStatus().toString()))
+                .andExpect(jsonPath("$[0].client").value(testCar.getClient()));
     }
 
 
