@@ -1,25 +1,25 @@
 package com.example.demo.domain.car;
 
 public class CarDTO {
-    String brandName;
-    String modelName;
-    CarStatus status;
-    long clientId;
+    private String brandName;
+    private String modelName;
+    private CarStatus status;
+    private long clientId;
 
-    public CarDTO(String brandName, String modelName, CarStatus status, long clientId) {
+    CarDTO(String brandName, String modelName, CarStatus status, long clientId) {
         this.brandName = brandName;
         this.modelName = modelName;
         this.status = status;
         this.clientId = clientId;
     }
 
-    public String getBrandName() {
+    String getBrandName() {
         return brandName;
     }
-    public String getModelName() {
+    String getModelName() {
         return modelName;
     }
-    public CarStatus getStatus() {
+    CarStatus getStatus() {
         return status;
     }
 

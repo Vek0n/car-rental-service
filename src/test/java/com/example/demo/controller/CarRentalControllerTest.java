@@ -1,6 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.car.*;
+import com.example.demo.domain.car.Car;
+import com.example.demo.domain.car.CarBuilder;
+import com.example.demo.domain.car.CarDTO;
+import com.example.demo.domain.car.CarStatus;
 import com.example.demo.domain.client.Client;
 import com.example.demo.domain.client.ClientBuilder;
 import com.example.demo.service.CarRentalService;
@@ -13,14 +16,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @RunWith(SpringRunner.class)
@@ -34,13 +37,16 @@ class CarRentalControllerTest {
     private CarRentalService carRentalServiceMock;
 
     @Test
-    void getCar() throws Exception {
-        //Given
+    void addCar() throws Exception {
         Car givenCar = new CarBuilder().defaultCar().build();
-        given(carRentalServiceMock.getCar(givenCar.getCarId())).willReturn(givenCar);
-        //Then
-        mvc.perform(get("/cars/" + givenCar.getCarId())
-        .contentType(MediaType.ALL))
+
+        given(carRentalServiceMock.addCar(any(CarDTO.class))).willReturn(givenCar);
+
+        mvc.perform(post("/cars/")
+                .content("{\"brandName\":\"Skoda\"," +
+                        " \"modelName\":\"Fabia\"}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.carId").value(givenCar.getCarId()))
                 .andExpect(jsonPath("$.brandName").value(givenCar.getBrandName()))
@@ -74,15 +80,13 @@ class CarRentalControllerTest {
     }
 
     @Test
-    void addCar() throws Exception{
+    void getCar() throws Exception {
+        //Given
         Car givenCar = new CarBuilder().defaultCar().build();
-
-        given(carRentalServiceMock.addCar(any(Car.class))).willReturn(givenCar);
-
-        mvc.perform(post("/cars/")
-                .content("{\"brandName\":\"Skoda\", \"modelName\":\"Fabia\"}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+        given(carRentalServiceMock.getCar(givenCar.getCarId())).willReturn(givenCar);
+        //Then
+        mvc.perform(get("/cars/" + givenCar.getCarId())
+                .contentType(MediaType.ALL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.carId").value(givenCar.getCarId()))
                 .andExpect(jsonPath("$.brandName").value(givenCar.getBrandName()))
@@ -92,7 +96,7 @@ class CarRentalControllerTest {
     }
 
     @Test
-    void updateCar() throws Exception{
+    void updateCar() throws Exception {
         Client client = new ClientBuilder().defaultClient().build();
 
         Car givenCar = new CarBuilder()
@@ -122,7 +126,7 @@ class CarRentalControllerTest {
     }
 
     @Test
-    void deleteCar() throws Exception{
+    void deleteCar() throws Exception {
         Car givenCar = new CarBuilder().defaultCar().build();
         given(carRentalServiceMock.deleteCar(givenCar.getCarId())).willReturn(true);
 
@@ -133,7 +137,7 @@ class CarRentalControllerTest {
 
 
     @Test
-    void getAvailableCars() throws Exception{
+    void getAvailableCars() throws Exception {
         //Given
         List<Car> givenCars = List.of(
                 new CarBuilder()
@@ -162,9 +166,8 @@ class CarRentalControllerTest {
     }
 
 
-
     @Test
-    void getRentedCars() throws Exception{
+    void getRentedCars() throws Exception {
         //Given
         List<Car> givenCars = List.of(
                 new CarBuilder()
@@ -194,7 +197,7 @@ class CarRentalControllerTest {
 
 
     @Test
-    void rentCar() throws Exception{
+    void rentCar() throws Exception {
         //Given
         Car givenCar = new CarBuilder()
                 .defaultCar()
@@ -213,8 +216,8 @@ class CarRentalControllerTest {
         given(carRentalServiceMock.rentCar(givenCar.getCarId(), givenClient.getId())).willReturn(rentedTestCar);
 
         mvc.perform(post("/cars/rent/" + givenCar.getCarId())
-            .param("clientId", Long.toString(givenClient.getId()))
-            .contentType(MediaType.APPLICATION_JSON))
+                .param("clientId", Long.toString(givenClient.getId()))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.carId").value(rentedTestCar.getCarId()))
                 .andExpect(jsonPath("$.brandName").value(rentedTestCar.getBrandName()))
@@ -224,7 +227,7 @@ class CarRentalControllerTest {
     }
 
     @Test
-    void returnCar() throws Exception{
+    void returnCar() throws Exception {
 
         Client givenClient = new ClientBuilder()
                 .defaultClient()
@@ -243,8 +246,8 @@ class CarRentalControllerTest {
         given(carRentalServiceMock.returnCar(givenCar.getCarId(), givenClient.getId())).willReturn(returnedTestCar);
 
         mvc.perform(post("/cars/return/" + returnedTestCar.getCarId())
-            .param("clientId", Long.toString(givenClient.getId()))
-            .contentType(MediaType.APPLICATION_JSON))
+                .param("clientId", Long.toString(givenClient.getId()))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.carId").value(returnedTestCar.getCarId()))
                 .andExpect(jsonPath("$.brandName").value(returnedTestCar.getBrandName()))

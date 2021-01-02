@@ -10,9 +10,10 @@ public class CarBuilder {
     private CarStatus status;
     private Client client;
 
-    public CarBuilder(){}
+    public CarBuilder() {
+    }
 
-    public CarBuilder defaultCar(){
+    public CarBuilder defaultCar() {
         this.carId = 1;
         this.brandName = "Skoda";
         this.modelName = "Fabia";
@@ -21,32 +22,32 @@ public class CarBuilder {
         return this;
     }
 
-    public CarBuilder withCarId(long carId){
+    public CarBuilder withCarId(long carId) {
         this.carId = carId;
         return this;
     }
 
-    public CarBuilder withBrandName(String brandName){
+    public CarBuilder withBrandName(String brandName) {
         this.brandName = brandName;
         return this;
     }
 
-    public  CarBuilder withModelName(String modelName){
+    public CarBuilder withModelName(String modelName) {
         this.modelName = modelName;
         return this;
     }
 
-    public CarBuilder withStatus(CarStatus status){
+    public CarBuilder withStatus(CarStatus status) {
         this.status = status;
         return this;
     }
 
-    public CarBuilder withClient(Client client){
+    public CarBuilder withClient(Client client) {
         this.client = client;
         return this;
     }
 
-    public Car build(){
+    public Car build() {
         return new Car(carId, brandName, modelName, status, client);
     }
 }

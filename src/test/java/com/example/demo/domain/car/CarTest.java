@@ -12,6 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class CarTest {
 
     @Test
+    void shouldReturnIsAvailable() {
+        Client client = new ClientBuilder().defaultClient().build();
+        Car testCar = new CarBuilder().defaultCar().withStatus(CarStatus.RENTED).withClient(client).build();
+
+        assertFalse(testCar.isAvailable());
+    }
+
+    @Test
     void shouldRentCar() {
         //Given
         Car testCar = new CarBuilder().defaultCar().build();
@@ -27,7 +35,7 @@ class CarTest {
     }
 
     @Test
-    void returnCar() {
+    void shouldReturnCar() {
         Client client = new ClientBuilder().defaultClient().build();
         Car testCar = new CarBuilder().defaultCar().withStatus(CarStatus.RENTED).withClient(client).build();
 
@@ -39,22 +47,14 @@ class CarTest {
     }
 
     @Test
-    void initiateCar() {
+    void shouldInitiateCar() {
         Client client = new ClientBuilder().defaultClient().build();
         Car testCar = new CarBuilder().defaultCar().withStatus(CarStatus.RENTED).withClient(client).build();
 
         testCar.initiateCar();
 
         assertEquals(testCar.getStatus(), CarStatus.AVAILABLE);
-        assertEquals(testCar.getClient(), null);
+        assertNull(testCar.getClient());
         assertTrue(testCar.isAvailable());
-    }
-
-    @Test
-    void isAvailable() {
-        Client client = new ClientBuilder().defaultClient().build();
-        Car testCar = new CarBuilder().defaultCar().withStatus(CarStatus.RENTED).withClient(client).build();
-
-        assertFalse(testCar.isAvailable());
     }
 }

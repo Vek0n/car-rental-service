@@ -4,6 +4,7 @@ import com.example.demo.domain.car.*;
 import com.example.demo.domain.client.Client;
 import com.example.demo.domain.client.ClientBuilder;
 import com.example.demo.repository.CarRentalRepository;
+import com.example.demo.service.Exceptions.CannotDeleteCarException;
 import com.example.demo.service.Exceptions.CarNotFoundException;
 import com.example.demo.service.Exceptions.CarRentedByAnotherUserException;
 import com.example.demo.service.Exceptions.ClientNotFoundException;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,9 +48,10 @@ class CarRentalServiceTest {
     @Test
     void shouldAddCar() {
         Car testCar = new CarBuilder().defaultCar().build();
-        given(carRentalRepository.save(testCar)).willReturn(testCar);
+        CarDTO testCarDTO = new CarDTOBuilder().defaultCar().build();
+        given(carRentalRepository.save(any(Car.class))).willReturn(testCar);
 
-        Car result = testService.addCar(testCar);
+        Car result = testService.addCar(testCarDTO);
 
         assertEquals(result, testCar);
     }
@@ -63,33 +66,46 @@ class CarRentalServiceTest {
         assertEquals(result, testCar);
     }
 
+
     @Test
-    void shouldUpdateCar() throws ClientNotFoundException {
-//        Client client = new ClientBuilder().defaultClient().build();
-//
-//        CarDTO carToUpdate = new CarDTOBuilder()
-//                .defaultCar()
-//                .withClient(client.getId())
-//                .withStatus(CarStatus.RENTED)
-//                .build();
-//
-//        Car testCar = new CarBuilder()
-//                .defaultCar()
-//                .withClient(client)
-//                .withStatus(CarStatus.RENTED)
-//                .build();
-//
-//        given(clientService.getClient(client.getId())).willReturn(client);
-//        given(carRentalRepository.save(testCar)).willReturn(testCar);
-////        Mockito.lenient().when(carRentalRepository.save(testCar)).thenReturn(testCar);
-//
-//        Car result = testService.updateCar(carToUpdate, carToUpdate.getClientId());
-//
-//        assertEquals(result, testCar);
+    void shouldThrowCarNotFoundWhenGettingACar(){
+        Car testCar = new CarBuilder()
+                .defaultCar()
+                .build();
+
+        given(carRentalRepository.findById(testCar.getCarId())).willReturn(Optional.empty());
+
+        assertThrows(CarNotFoundException.class, () -> {
+           testService.getCar(testCar.getCarId());
+        });
     }
 
     @Test
-    void deleteCar() throws CarNotFoundException {
+    void shouldUpdateCar() throws ClientNotFoundException {
+        Client client = new ClientBuilder().defaultClient().build();
+
+        CarDTO carToUpdate = new CarDTOBuilder()
+                .defaultCar()
+                .withClient(client.getId())
+                .withStatus(CarStatus.RENTED)
+                .build();
+
+        Car testCar = new CarBuilder()
+                .defaultCar()
+                .withClient(client)
+                .withStatus(CarStatus.RENTED)
+                .build();
+
+        given(clientService.getClient(client.getId())).willReturn(client);
+        given(carRentalRepository.save(any(Car.class))).willReturn(testCar);
+
+        Car result = testService.updateCar(carToUpdate, carToUpdate.getClientId());
+
+        assertEquals(result, testCar);
+    }
+
+    @Test
+    void shouldDeleteCar() throws CarNotFoundException, CannotDeleteCarException {
         Car testCar = new CarBuilder().defaultCar().build();
         given(carRentalRepository.findById(testCar.getCarId())).willReturn(Optional.of(testCar));
 
@@ -98,8 +114,30 @@ class CarRentalServiceTest {
         assertTrue(result);
     }
 
+
+
     @Test
-    void getAvailableCars() {
+    void shouldThrowCannotDeleteCar(){
+        Client client = new ClientBuilder()
+                .defaultClient()
+                .build();
+
+        Car testCar = new CarBuilder()
+                .defaultCar()
+                .withStatus(CarStatus.RENTED)
+                .withClient(client)
+                .build();
+
+        given(carRentalRepository.findById(testCar.getCarId())).willReturn(Optional.of(testCar));
+
+        assertThrows(CannotDeleteCarException.class, () -> {
+            testService.deleteCar(testCar.getCarId());
+        });
+    }
+
+
+    @Test
+    void shouldGiveAvailableCars() {
         //Given
         Client  client = new ClientBuilder().defaultClient().build();
         List<Car> givenCars = List.of(new CarBuilder().defaultCar().build(),
@@ -153,7 +191,7 @@ class CarRentalServiceTest {
     }
 
     @Test
-    void getRentedCars() {
+    void shouldGiveRentedCars() {
         //Given
         Client  client = new ClientBuilder().defaultClient().build();
         List<Car> givenCars = List.of(new CarBuilder().defaultCar().build(),
@@ -182,7 +220,7 @@ class CarRentalServiceTest {
 
         //Then
         assertEquals(result.getStatus(), CarStatus.AVAILABLE);
-        assertEquals(result.getClient(), null);
+        assertNull(result.getClient());
         assertTrue(result.isAvailable());
     }
 
@@ -199,7 +237,6 @@ class CarRentalServiceTest {
                 .build();
 
         given(carRentalRepository.findById(testCar.getCarId())).willReturn(Optional.of(testCar));
-//        given(carRentalRepository.save(testCar)).willReturn(testCar);
 
         //Then
         Exception exception = assertThrows(CarRentedByAnotherUserException.class, () -> {

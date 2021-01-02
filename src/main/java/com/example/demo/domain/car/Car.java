@@ -1,9 +1,18 @@
 package com.example.demo.domain.car;
 
-import javax.persistence.*;
 
 import com.example.demo.domain.client.Client;
-import net.minidev.json.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
+import javax.persistence.EnumType;
+import javax.persistence.CascadeType;
+import javax.persistence.JoinColumn;
 
 @Entity
 public class Car {
@@ -22,12 +31,18 @@ public class Car {
     private Car() {
     }
 
-    public Car(long id, CarDTO car, Client client){
+    public Car(long id, CarDTO car, Client client) {
         this.carId = id;
         this.brandName = car.getBrandName();
         this.modelName = car.getModelName();
         this.status = car.getStatus();
         this.client = client;
+    }
+
+    public Car(CarDTO car) {
+        this.brandName = car.getBrandName();
+        this.modelName = car.getModelName();
+        this.status = CarStatus.AVAILABLE;
     }
 
     Car(long carId, String brandName, String modelName, CarStatus status, Client client) {
@@ -58,6 +73,11 @@ public class Car {
         return status;
     }
 
+    @JsonIgnore
+    public boolean isAvailable() {
+        return status.equals(CarStatus.AVAILABLE);
+    }
+
     public void rentCar(Client client) {
         this.status = CarStatus.RENTED;
         this.client = client;
@@ -70,11 +90,6 @@ public class Car {
     public void initiateCar() {
         this.status = CarStatus.AVAILABLE;
         this.client = null;
-    }
-
-    @JsonIgnore
-    public boolean isAvailable() {
-        return this.client == null;
     }
 
     @Override

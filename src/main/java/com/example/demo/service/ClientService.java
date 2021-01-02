@@ -15,7 +15,7 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
-    public Client getClient (long id) throws ClientNotFoundException {
+    Client getClient (long id) throws ClientNotFoundException {
         return clientRepository.findById(id).orElseThrow(() -> new ClientNotFoundException(id));
     }
 }
