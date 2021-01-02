@@ -12,115 +12,105 @@
 - **Response** :
   ```
   {
-    "id": 1,
-    "client_id": 0,
+    "carId": 2,
     "brandName": "Ford",
     "modelName": "Focus",
-    "status": "AVAILABLE"
+    "status": "AVAILABLE",
+    "client": null
   }
   ```
   
 #### Get all cars
 - **Request** : **`GET /cars`**
 - **Response** :
-	```
-	{
-	  "_embedded": {
-	    "cars": [
-	      {
-		"id": 1,
-		"client_id": 0,
-		"brandName": "Ford",
-		"modelName": "Focus",
-		"status": "AVAILABLE",
-		"_links": {
-		  "self": {
-		    "href": "http://localhost:8080/cars/1"
-		  },
-		  "cars": {
-		    "href": "http://localhost:8080/cars"
-		  }
-		}
-	      }
-	    ]
-	  },
-	  "_links": {
-	    "self": {
-	      "href": "http://localhost:8080/cars"
+  ```
+	]
+	  {
+	    "carId": 1,
+	    "brandName": "Audi",
+	    "modelName": "TT",
+	    "status": "RENTED",
+	    "client": {
+	      "firstName": "Szymon",
+	      "secondName": "Kaczmarek",
+	      "id": 2
 	    }
+	  },
+	  {
+	    "carId": 2,
+	    "brandName": "Ford",
+	    "modelName": "Focus",
+	    "status": "AVAILABLE",
+	    "client": null
 	  }
-	}
-	```
+	]
+  ```
+
+  
+#### Get a car
+- **Request** : **`GET /cars/{id}`**
+- **Response** :
+  ```
+	  {
+	    "carId": 2,
+	    "brandName": "Ford",
+	    "modelName": "Focus",
+	    "status": "AVAILABLE",
+	    "client": null
+	  }
+  ```
   
   
 #### Delete a car
-- **Request** : **`POST /cars/{id}`**
+- **Request** : **`DELETE /cars/{id}`**
 - **Response** :
   ```
   200 OK
+  true
   ```
   
 #### Edit a car
 - **Request** : **`PUT /cars/{id}`**
-	```
+  ```
 	{
-	  "brandName": "Ford",
-	  "modelName": "Fiesta"
+		"brandName":"Ford",
+		"modelName":"Fiesta",
+		"status":"AVAILABLE"
 	}
-	```
+  ```
 - **Response** :
   ```
-  {
-    "id": 1,
-    "client_id": 0,
-    "brandName": "Ford",
-    "modelName": "Fiesta",
-    "status": "AVAILABLE"
-  }
+	{
+	  "carId": 2,
+	  "brandName": "Ford",
+	  "modelName": "Fiesta",
+	  "status": "AVAILABLE",
+	  "client": null
+	}
   ```
 
 #### List of all available cars
 - **Request** : **`GET /cars/rent`**
 
 #### Rent a car
-- **Request** : **`POST /cars/rent/{car_id}`**
-	```
-	{
-		"id":{client_id}
-	}
-	```
+- **Request** : **`POST /cars/rent/{carId}?clientId={clientId}`**
 - **Response** :
-	```
+  ```
 	{
-	  "_embedded": {
-	    "cars": [
-	      {
-		"id": 1,
-		"client_id": {client_id},
-		"brandName": "Ford",
-		"modelName": "Fiesta",
-		"status": "RENTED",
-		"_links": {
-		  "self": {
-		    "href": "http://localhost:8080/cars/1"
-		  },
-		  "cars": {
-		    "href": "http://localhost:8080/cars"
-		  }
-		}
-	      }
-	    ]
-	  },
-	  "_links": {
-	    "self": {
-	      "href": "http://localhost:8080/cars"
-	    }
+	  "carId": 2,
+	  "brandName": "Ford",
+	  "modelName": "Fiesta",
+	  "status": "RENTED",
+	  "client": {
+	    "firstName": "Jan",
+	    "secondName": "Kowalski",
+	    "id": 1
 	  }
 	}
-	```
+  ```
   
 #### Rent a car (in case of conflict)
-- **Request** : **`POST /cars/rent/{id}`**
+- **Request** : **`POST /cars/rent/{carId}?clientId={clientId}`**
 - **Response** :
   ```
   409 Conflict
@@ -128,80 +118,35 @@
   ```
   
 #### List of all rented cars
-- **Request** : **`GET /cars/return/`**
+- **Request** : **`GET /cars/return`**
 - **Response** :
-	```
-	{
-	  "_embedded": {
-	    "cars": [
-	      {
-		"id": 1,
-		"client_id": {client_id},
-		"brandName": "Ford",
-		"modelName": "Fiesta",
-		"status": "RENTED",
-		"_links": {
-		  "self": {
-		    "href": "http://localhost:8080/cars/1"
-		  },
-		  "cars": {
-		    "href": "http://localhost:8080/cars"
-		  }
-		}
-	      }
-	    ]
-	  },
-	  "_links": {
-	    "self": {
-	      "href": "http://localhost:8080/cars"
-	    }
-	  }
-	}
-	```
+
   
 #### Return a car
-- **Request** : **`POST /cars/return/{id}`**
+- **Request** : **`POST /cars/return/{carId}?clientId={clientId}`**
 - **Response** :
-	```
+  ```
 	{
-	  "_embedded": {
-	    "cars": [
-	      {
-		"id": 1,
-		"client_id": 0,
-		"brandName": "Ford",
-		"modelName": "Fiesta",
-		"status": "AVAILABLE",
-		"_links": {
-		  "self": {
-		    "href": "http://localhost:8080/cars/1"
-		  },
-		  "cars": {
-		    "href": "http://localhost:8080/cars"
-		  }
-		}
-	      }
-	    ]
-	  },
-	  "_links": {
-	    "self": {
-	      "href": "http://localhost:8080/cars"
-	    }
-	  }
+	  "carId": 2,
+	  "brandName": "Ford",
+	  "modelName": "Fiesta",
+	  "status": "AVAILABLE",
+	  "client": null
 	}
-	```
+  ```
  
  
 #### Return a car (in case of conflict)
-- **Request** : **`POST /cars/return{id}`**
+- **Request** : **`POST /cars/return/{carId}?clientId={clientId}`**
 - **Response** :
   ```
   409 Conflict
   Car not rented
   ```
   
-#### Pre-populated clients database:
+#### Pre-populated database with clients :
   ```
-  insert into client values (1, 'Jan', 'Kowalski')
-  insert into client values (2, 'Szymon', 'Kaczmarek')
+insert into client (FIRST_NAME, SECOND_NAME) values ('Jan', 'Kowalski'), ('Szymon', 'Kaczmarek')
+
   ```
+  
